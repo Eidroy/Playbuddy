@@ -35,7 +35,11 @@ class LoginController extends AbstractController
         $em -> persist($user);
         $em -> flush();
 
-        return $this -> json(['token' => $user -> getToken()]);
+        return $this->json([
+            'token' => $user->getToken(),
+            'user_id' => $user->getId(),
+            'username' => $user->getUsername()
+        ]);
     }
 
     #[Route('/register', name: 'app_register', methods: ['POST'])]
