@@ -55,7 +55,7 @@ class LoginController extends AbstractController
             'url' => [
                 'secure' => true
         ]]);
-        $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
+        $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getRealPath(), [
             'folder' => 'PlayBuddy',
         ]);
 
