@@ -10,7 +10,7 @@
 
 | method | prefix | route                  | parameter(url)               | parameter(body)                                                                           | What it does                          |
 | ------ | ------ | ---------------------- | ---------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------- |
-| POST   | api    | /login                 | /                            | UsernameOfEmail and password                                                              | login to account                      |
+| POST   | api    | /login                 | /                            | UsernameOrEmail and password                                                              | login to account                      |
 | POST   | api    | /register              | /                            | Username, email, password, bio, location, games , platforms, skill_level, profile_picture | make a new account                    |
 | GET    | api    | /users                 | /                            | /                                                                                         | retrieve all users                    |
 | GET    | api    | /users                 | /${id}                       | /                                                                                         | retrieve a specific user by id        |
