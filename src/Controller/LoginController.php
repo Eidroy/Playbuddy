@@ -46,34 +46,52 @@ class LoginController extends AbstractController
     public function register(EntityManagerInterface $em, Request $request): Response
     {
 
-        $profilePicture = $request->files->get('profile_picture');
-        $cloudinary = new Cloudinary([
-            "cloud" => [
-                "cloud_name" => "dlsx2xp32",
-                "api_key" => "939582241287325",
-                "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"],
-            'url' => [
-                'secure' => true
-        ]]);
-        $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getRealPath(), [
-            'folder' => 'PlayBuddy',
-        ]);
+        if ($request -> request -> get('profile_picture') === null) {
+            $user = new Users();
+            $user -> setUsername($request -> request -> get('username'));
+            $user -> setPassword($request -> request -> get('password'));
+            $user -> setEmail($request -> request -> get('email'));
+            $user -> setBio($request -> request -> get('bio'));
+            $user -> setLocation($request -> request -> get('location'));
+            $user -> setGames($request -> request -> get('games'));
+            $user -> setPlatforms($request -> request -> get('platforms'));
+            $user -> setSkillLevel($request -> request -> get('skill_level'));
 
+            $em -> persist($user);
+            $em -> flush();
 
-        $user = new Users();
-        $user -> setUsername($request -> request -> get('username'));
-        $user -> setPassword($request -> request -> get('password'));
-        $user -> setEmail($request -> request -> get('email'));
-        $user -> setBio($request -> request -> get('bio'));
-        $user -> setLocation($request -> request -> get('location'));
-        $user -> setGames($request -> request -> get('games'));
-        $user -> setPlatforms($request -> request -> get('platforms'));
-        $user -> setSkillLevel($request -> request -> get('skill_level'));
-        $user -> setProfilePicture($uploadResult['secure_url']);
-
-        $em -> persist($user);
-        $em -> flush();
-
-        return $this -> json(['user created successfully']);
+            return $this -> json(['user created successfully']);
+        }else {
+            
+          $profilePicture = $request->files->get('profile_picture');
+          $cloudinary = new Cloudinary([
+              "cloud" => [
+                  "cloud_name" => "dlsx2xp32",
+                  "api_key" => "939582241287325",
+                  "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"],
+              'url' => [
+                  'secure' => true
+          ]]);
+          $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getRealPath(), [
+              'folder' => 'PlayBuddy',
+          ]);
+  
+  
+          $user = new Users();
+          $user -> setUsername($request -> request -> get('username'));
+          $user -> setPassword($request -> request -> get('password'));
+          $user -> setEmail($request -> request -> get('email'));
+          $user -> setBio($request -> request -> get('bio'));
+          $user -> setLocation($request -> request -> get('location'));
+          $user -> setGames($request -> request -> get('games'));
+          $user -> setPlatforms($request -> request -> get('platforms'));
+          $user -> setSkillLevel($request -> request -> get('skill_level'));
+          $user -> setProfilePicture($uploadResult['secure_url']);
+  
+          $em -> persist($user);
+          $em -> flush();
+  
+          return $this -> json(['user created successfully']);
+       }
     }
 }
