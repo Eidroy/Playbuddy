@@ -38,7 +38,8 @@ class LoginController extends AbstractController
         return $this->json([
             'token' => $user->getToken(),
             'user_id' => $user->getId(),
-            'username' => $user->getUsername()
+            'username' => $user->getUsername(),
+            'profile_picture' => $user->getProfilePicture(),
         ]);
     }
 
