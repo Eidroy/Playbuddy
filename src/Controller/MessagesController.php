@@ -99,7 +99,7 @@ class MessagesController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/messages/edit/{id}', name: 'app_messages_edit', methods: ['PUT'])]
+    #[Route('/messages/{id}', name: 'app_messages_edit', methods: ['PUT', 'PATCH'])]
     public function editMessage(Request $request, $id): Response
     {
         $message = $this->em->getRepository(Messages::class)->find($id);
