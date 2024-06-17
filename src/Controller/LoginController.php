@@ -40,6 +40,7 @@ class LoginController extends AbstractController
             'user_id' => $user->getId(),
             'username' => $user->getUsername(),
             'profile_picture' => $user->getProfilePicture(),
+            'email' => $user->getEmail(),
         ]);
     }
 
