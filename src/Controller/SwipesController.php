@@ -43,6 +43,8 @@ class SwipesController extends AbstractController
         $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
         if ($time !== null) {
             $swipe -> setTime($time);
+        } else {
+            $swipe -> setTime(new \DateTime());
         }
 
 
