@@ -20,13 +20,12 @@ class SwipesController extends AbstractController
         $data = [];
         
         foreach ($swipes as $swipe) {
-            $time = $swipe -> getTime() != null ? $swipe -> getTime() -> format('Y-m-d H:i:s') : null;
             $data[] = [
                 'id' => $swipe -> getId(),
                 'user_id' => $swipe -> getUserId(),
                 'swiped_on_id' => $swipe -> getSwipedOnId(),
                 'direction' => $swipe -> getDirection(),
-                'time' => $time
+                'time'=> $swipe -> getTime()
             ];
         }
 
@@ -37,26 +36,25 @@ class SwipesController extends AbstractController
     public function create(EntityManagerInterface $em, Request $request): JsonResponse
     {
         $swipe = new Swipes();
-        $swipe -> setUserId($request -> request -> get('user_id'));
-        $swipe -> setSwipedOnId($request -> request -> get('swiped_on_id'));
-        $swipe -> setDirection($request -> request -> get('direction'));
+        $swipe->setUserId($request->request->get('user_id'));
+        $swipe->setSwipedOnId($request->request->get('swiped_on_id'));
+        $swipe->setDirection($request->request->get('direction'));
         $timeString = $request->get('time');
-        $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        $swipe -> setTime($time);
+        $time = $timeString ? \DateTime::createFromFormat('Y-m-d H:i:s', $timeString) : null;
+        $swipe->setTime($time);
 
-
-        $em -> persist($swipe);
-        $em -> flush();
+        $em->persist($swipe);
+        $em->flush();
 
         $data = [
-            'id' => $swipe -> getId(),
-            'user_id' => $swipe -> getUserId(),
-            'swiped_on_id' => $swipe -> getSwipedOnId(),
-            'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
+            'id' => $swipe->getId(),
+            'user_id' => $swipe->getUserId(),
+            'swiped_on_id' => $swipe->getSwipedOnId(),
+            'direction' => $swipe->getDirection(),
+            'time' => $swipe->getTime()
         ];
 
-        return $this -> json($data);
+        return $this->json($data);
     }
 
     #[Route('/swipes/{id}', name: 'app_swipes_show', methods: ['GET'])]
