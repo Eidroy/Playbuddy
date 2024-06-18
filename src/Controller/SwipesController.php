@@ -41,11 +41,7 @@ class SwipesController extends AbstractController
         $swipe -> setDirection($request -> request -> get('direction'));
         $timeString = $request->get('time');
         $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        if ($time !== null) {
-            $swipe -> setTime($time);
-        } else {
-            $swipe -> setTime(new \DateTime());
-        }
+        
 
 
         $em -> persist($swipe);
