@@ -48,23 +48,7 @@ class LoginController extends AbstractController
     public function register(EntityManagerInterface $em, Request $request): Response
     {
 
-        if ($request -> request -> get('profile_picture') === null) {
-            $user = new Users();
-            $user -> setUsername($request -> request -> get('username'));
-            $user -> setPassword($request -> request -> get('password'));
-            $user -> setEmail($request -> request -> get('email'));
-            $user -> setBio($request -> request -> get('bio'));
-            $user -> setLocation($request -> request -> get('location'));
-            $user -> setGames($request -> request -> get('games'));
-            $user -> setPlatforms($request -> request -> get('platforms'));
-            $user -> setSkillLevel($request -> request -> get('skill_level'));
-
-            $em -> persist($user);
-            $em -> flush();
-
-            return $this -> json(['user created successfully']);
-        }else {
-            
+        if ($request -> request -> get('profile_picture') !== null) { 
           $profilePicture = $request->files->get('profile_picture');
           $cloudinary = new Cloudinary([
               "cloud" => [
@@ -94,6 +78,21 @@ class LoginController extends AbstractController
           $em -> flush();
   
           return $this -> json(['user created successfully']);
-       }
+        } else  {
+          $user = new Users();
+          $user -> setUsername($request -> request -> get('username'));
+          $user -> setPassword($request -> request -> get('password'));
+          $user -> setEmail($request -> request -> get('email'));
+          $user -> setBio($request -> request -> get('bio'));
+          $user -> setLocation($request -> request -> get('location'));
+          $user -> setGames($request -> request -> get('games'));
+          $user -> setPlatforms($request -> request -> get('platforms'));
+          $user -> setSkillLevel($request -> request -> get('skill_level'));
+   
+          $em -> persist($user);
+          $em -> flush();
+   
+          return $this -> json(['user created successfully']);
+        }
     }
 }
