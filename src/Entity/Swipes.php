@@ -23,7 +23,7 @@ class Swipes
     #[ORM\Column(length: 255)]
     private ?string $direction = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $time = null;
 
     public function getId(): ?int
