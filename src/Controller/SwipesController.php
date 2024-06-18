@@ -36,29 +36,28 @@ class SwipesController extends AbstractController
     public function create(EntityManagerInterface $em, Request $request): JsonResponse
     {
         $swipe = new Swipes();
-        $swipe->setUserId($request->request->get('user_id'));
-        $swipe->setSwipedOnId($request->request->get('swiped_on_id'));
-        $swipe->setDirection($request->request->get('direction'));
+        $swipe -> setUserId($request -> request -> get('user_id'));
+        $swipe -> setSwipedOnId($request -> request -> get('swiped_on_id'));
+        $swipe -> setDirection($request -> request -> get('direction'));
         $timeString = $request->get('time');
-        $time = $timeString ? \DateTime::createFromFormat('Y-m-d H:i:s', $timeString) : null;
-        if ($time) {
-            $swipe->setTime($time);
-        } else {
-            $swipe->setTime(null);
+        $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
+        if ($time !== null) {
+            $swipe -> setTime($time);
         }
 
-        $em->persist($swipe);
-        $em->flush();
+
+        $em -> persist($swipe);
+        $em -> flush();
 
         $data = [
-            'id' => $swipe->getId(),
-            'user_id' => $swipe->getUserId(),
-            'swiped_on_id' => $swipe->getSwipedOnId(),
-            'direction' => $swipe->getDirection(),
-            'time' => $swipe->getTime()
+            'id' => $swipe -> getId(),
+            'user_id' => $swipe -> getUserId(),
+            'swiped_on_id' => $swipe -> getSwipedOnId(),
+            'direction' => $swipe -> getDirection(),
+            'time' => $swipe -> getTime()
         ];
 
-        return $this->json($data);
+        return $this -> json($data);
     }
 
     #[Route('/swipes/{id}', name: 'app_swipes_show', methods: ['GET'])]
