@@ -23,8 +23,6 @@ class Swipes
     #[ORM\Column(length: 255)]
     private ?string $direction = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $time = null;
 
     public function getId(): ?int
     {
@@ -63,18 +61,6 @@ class Swipes
     public function setDirection(string $direction): static
     {
         $this->direction = $direction;
-
-        return $this;
-    }
-
-    public function getTime(): ?\DateTimeInterface
-    {
-        return $this->time;
-    }
-
-    public function setTime(\DateTimeInterface $time): static
-    {
-        $this->time = $time;
 
         return $this;
     }

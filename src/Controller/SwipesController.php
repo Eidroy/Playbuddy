@@ -24,9 +24,7 @@ class SwipesController extends AbstractController
                 'id' => $swipe -> getId(),
                 'user_id' => $swipe -> getUserId(),
                 'swiped_on_id' => $swipe -> getSwipedOnId(),
-                'direction' => $swipe -> getDirection(),
-                'time'=> $swipe -> getTime()
-            ];
+                'direction' => $swipe -> getDirection()            ];
         }
 
         return $this -> json($data);
@@ -39,9 +37,6 @@ class SwipesController extends AbstractController
         $swipe -> setUserId($request -> request -> get('user_id'));
         $swipe -> setSwipedOnId($request -> request -> get('swiped_on_id'));
         $swipe -> setDirection($request -> request -> get('direction'));
-        $timeString = $request->get('time');
-        $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        
 
 
         $em -> persist($swipe);
@@ -52,7 +47,6 @@ class SwipesController extends AbstractController
             'user_id' => $swipe -> getUserId(),
             'swiped_on_id' => $swipe -> getSwipedOnId(),
             'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
         ];
 
         return $this -> json($data);
@@ -68,7 +62,6 @@ class SwipesController extends AbstractController
             'user_id' => $swipe -> getUserId(),
             'swiped_on_id' => $swipe -> getSwipedOnId(),
             'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
         ];
 
         return $this -> json($data);
@@ -93,7 +86,6 @@ class SwipesController extends AbstractController
         $swipe -> setDirection($request -> request -> get('direction'));
         $timeString = $request->get('time');
         $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        $swipe -> setTime($time);
         $em -> flush();
 
         $data = [
@@ -101,7 +93,6 @@ class SwipesController extends AbstractController
             'user_id' => $swipe -> getUserId(),
             'swiped_on_id' => $swipe -> getSwipedOnId(),
             'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
         ];
 
         return $this -> json($data);
