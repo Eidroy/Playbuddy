@@ -72,7 +72,7 @@ class LoginController extends AbstractController
           $user -> setGames($request -> request -> get('games'));
           $user -> setPlatforms($request -> request -> get('platforms'));
           $user -> setSkillLevel($request -> request -> get('skill_level'));
-          $user -> setProfilePicture($uploadResult['secure_url']);
+          $user -> setProfilePicture($uploadResult['url']);
   
           $em -> persist($user);
           $em -> flush();
