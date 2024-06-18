@@ -55,16 +55,20 @@ class SwipesController extends AbstractController
     #[Route('/swipes/{id}', name: 'app_swipes_show', methods: ['GET'])]
     public function show(EntityManagerInterface $em, int $id): JsonResponse
     {
-        $swipe = $em -> getRepository(Swipes::class) -> find($id);
+        $swipes = $em->getRepository(Swipes::class)->findBy(['user_id' => $id, 'swiped_on_id' => $id]);
 
-        $data = [
-            'id' => $swipe -> getId(),
-            'user_id' => $swipe -> getUserId(),
-            'swiped_on_id' => $swipe -> getSwipedOnId(),
-            'direction' => $swipe -> getDirection(),
-        ];
+        $data = [];
+        
+        foreach ($swipes as $swipe) {
+            $data[] = [
+                'id' => $swipe->getId(),
+                'user_id' => $swipe->getUserId(),
+                'swiped_on_id' => $swipe->getSwipedOnId(),
+                'direction' => $swipe->getDirection(),
+            ];
+        }
 
-        return $this -> json($data);
+        return $this->json($data);
     }
 
     #[Route('/swipes/{id}', name: 'app_swipes_update', methods: ['PUT', 'PATCH'])]
