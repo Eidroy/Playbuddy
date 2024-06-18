@@ -20,12 +20,13 @@ class SwipesController extends AbstractController
         $data = [];
         
         foreach ($swipes as $swipe) {
+            $time = $swipe -> getTime() != null ? $swipe -> getTime() -> format('Y-m-d H:i:s') : null;
             $data[] = [
                 'id' => $swipe -> getId(),
                 'user_id' => $swipe -> getUserId(),
                 'swiped_on_id' => $swipe -> getSwipedOnId(),
                 'direction' => $swipe -> getDirection(),
-                'time'=> $swipe -> getTime()
+                'time' => $time
             ];
         }
 
