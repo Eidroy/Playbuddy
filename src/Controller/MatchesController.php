@@ -48,7 +48,7 @@ class MatchesController extends AbstractController
         $direction = $request->request->get('direction');
         $time = $request->request->get('time');
 
-        if ($direction !== 'right') {
+        if ($direction !== 'left') {
             return $this->json(['status' => 'No match']);
         }
     
