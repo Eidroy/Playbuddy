@@ -24,7 +24,6 @@ class MessagesController extends AbstractController
         $sentMessages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
         $receivedMessages = $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]);
         $messages = array_merge($sentMessages, $receivedMessages);
-        $data = [];
         $conversation = [];
 
         foreach ($messages as $message) {
@@ -35,12 +34,14 @@ class MessagesController extends AbstractController
                 $recipientProfilePicture = $recipient->getProfilePicture();
                 $lastMessage = $message->getContent();
                 $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
-                $conversation[$recipientId] = [
-                    'username' => $recipientUsername,
-                    'profile_picture' => $recipientProfilePicture,
-                    'last_message' => $lastMessage,
-                    'last_message_time' => $lastMessageTime
-                ];
+                if (!isset($conversation[$recipientId]) || $lastMessageTime > $conversation[$recipientId]['last_message_time']) {
+                    $conversation[$recipientId] = [
+                        'username' => $recipientUsername,
+                        'profile_picture' => $recipientProfilePicture,
+                        'last_message' => $lastMessage,
+                        'last_message_time' => $lastMessageTime
+                    ];
+                }
             } else {
                 $senderId = $message->getSenderId();
                 $sender = $this->em->getRepository(Users::class)->find($senderId);
@@ -48,18 +49,16 @@ class MessagesController extends AbstractController
                 $senderProfilePicture = $sender->getProfilePicture();
                 $lastMessage = $message->getContent();
                 $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
-                $conversation[$senderId] = [
-                    'username' => $senderUsername,
-                    'profile_picture' => $senderProfilePicture,
-                    'last_message' => $lastMessage,
-                    'last_message_time' => $lastMessageTime
-                ];
+                if (!isset($conversation[$senderId]) || $lastMessageTime > $conversation[$senderId]['last_message_time']) {
+                    $conversation[$senderId] = [
+                        'username' => $senderUsername,
+                        'profile_picture' => $senderProfilePicture,
+                        'last_message' => $lastMessage,
+                        'last_message_time' => $lastMessageTime
+                    ];
+                }
             }
         }
-        // Sort the conversation based on the time of the last message
-        usort($data, function ($a, $b) {
-            return $b['last_message_time'] <=> $a['last_message_time'];
-        });
 
         $data = array_values($conversation);
         return $this->json($data);
