@@ -33,10 +33,12 @@ class MessagesController extends AbstractController
                 $recipientUsername = $recipient->getUsername();
                 $recipientProfilePicture = $recipient->getProfilePicture();
                 $lastMessage = $message->getContent();
+                $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
                 $conversation[$recipientId] = [
                     'username' => $recipientUsername,
                     'profile_picture' => $recipientProfilePicture,
-                    'last_message' => $lastMessage
+                    'last_message' => $lastMessage,
+                    'last_message_time' => $lastMessageTime
                 ];
             } else {
                 $senderId = $message->getSenderId();
@@ -44,13 +46,20 @@ class MessagesController extends AbstractController
                 $senderUsername = $sender->getUsername();
                 $senderProfilePicture = $sender->getProfilePicture();
                 $lastMessage = $message->getContent();
+                $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
                 $conversation[$senderId] = [
                     'username' => $senderUsername,
                     'profile_picture' => $senderProfilePicture,
-                    'last_message' => $lastMessage
+                    'last_message' => $lastMessage,
+                    'last_message_time' => $lastMessageTime
                 ];
             }
         }
+        // Sort the conversation based on the time of the last message
+        usort($data, function ($a, $b) {
+            return $b['last_message_time'] <=> $a['last_message_time'];
+        });
+
         $data = array_values($conversation);
         return $this->json($data);
     }
