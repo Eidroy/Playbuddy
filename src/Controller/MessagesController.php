@@ -36,6 +36,7 @@ class MessagesController extends AbstractController
                 $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
                 if (!isset($conversation[$recipientId]) || $lastMessageTime > $conversation[$recipientId]['last_message_time']) {
                     $conversation[$recipientId] = [
+                        'id' => $recipientId,
                         'username' => $recipientUsername,
                         'profile_picture' => $recipientProfilePicture,
                         'last_message' => $lastMessage,
@@ -51,6 +52,7 @@ class MessagesController extends AbstractController
                 $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
                 if (!isset($conversation[$senderId]) || $lastMessageTime > $conversation[$senderId]['last_message_time']) {
                     $conversation[$senderId] = [
+                        'id' => $senderId,
                         'username' => $senderUsername,
                         'profile_picture' => $senderProfilePicture,
                         'last_message' => $lastMessage,
