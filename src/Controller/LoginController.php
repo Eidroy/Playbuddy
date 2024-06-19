@@ -54,13 +54,11 @@ class LoginController extends AbstractController
     
         $cloudinary = new Cloudinary([
             "cloud" => [
-                "cloud_name" => $_ENV['CLOUDINARY_CLOUD_NAME'],
-                "api_key" => $_ENV['CLOUDINARY_API_KEY'],
-                "api_secret" => $_ENV['CLOUDINARY_API_SECRET']
-            ],
+                "cloud_name" => "dlsx2xp32",
+                "api_key" => "939582241287325",
+                "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"],
             'url' => [
-                'secure' => true
-            ]
+                'secure' => true]
         ]);
     
         try {
