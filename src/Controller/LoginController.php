@@ -47,35 +47,49 @@ class LoginController extends AbstractController
     #[Route('/register', name: 'app_register', methods: ['POST'])]
     public function register(EntityManagerInterface $em, Request $request): Response
     {
-
         $profilePicture = $request->files->get('profile_picture');
+        if (!$profilePicture) {
+            return $this->json(['error' => 'Profile picture is required'], Response::HTTP_BAD_REQUEST);
+        }
+    
         $cloudinary = new Cloudinary([
             "cloud" => [
-                "cloud_name" => "dlsx2xp32",
-                "api_key" => "939582241287325",
-                "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"],
+                "cloud_name" => $_ENV['CLOUDINARY_CLOUD_NAME'],
+                "api_key" => $_ENV['CLOUDINARY_API_KEY'],
+                "api_secret" => $_ENV['CLOUDINARY_API_SECRET']
+            ],
             'url' => [
                 'secure' => true
-        ]]);
-        $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
-            'folder' => 'PlayBuddy',
+            ]
         ]);
-
-
+    
+        try {
+            $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
+                'folder' => 'PlayBuddy',
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Failed to upload profile picture: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    
         $user = new Users();
-        $user -> setUsername($request -> request -> get('username'));
-        $user -> setPassword($request -> request -> get('password'));
-        $user -> setEmail($request -> request -> get('email'));
-        $user -> setBio($request -> request -> get('bio'));
-        $user -> setLocation($request -> request -> get('location'));
-        $user -> setGames($request -> request -> get('games'));
-        $user -> setPlatforms($request -> request -> get('platforms'));
-        $user -> setSkillLevel($request -> request -> get('skill_level'));
-        $user -> setProfilePicture($uploadResult['secure_url']);
-
-        $em -> persist($user);
-        $em -> flush();
-
-        return $this -> json(['user created successfully']);
+        $user->setUsername($request->request->get('username'));
+        $hashedPassword = $passwordHasher->hashPassword($user, $request->request->get('password'));
+        $user->setPassword($hashedPassword);
+        $user->setEmail($request->request->get('email'));
+        $user->setBio($request->request->get('bio'));
+        $user->setLocation($request->request->get('location'));
+        $user->setGames($request->request->get('games'));
+        $user->setPlatforms($request->request->get('platforms'));
+        $user->setSkillLevel($request->request->get('skill_level'));
+        $user->setProfilePicture($uploadResult['secure_url']);
+    
+        try {
+            $em->persist($user);
+            $em->flush();
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'An error occurred while creating the user: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    
+        return $this->json(['user created successfully']);
     }
 }
