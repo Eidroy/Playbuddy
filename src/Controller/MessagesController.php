@@ -21,8 +21,9 @@ class MessagesController extends AbstractController
     #[Route('/messages/conversation/{id}', name: 'app_messages_conversation', methods: ['GET'])]
     public function showConversation($id): Response
     {
-        $messages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
-        $messages = array_merge($messages, $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]));
+        $sentMessages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
+        $receivedMessages = $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]);
+        $messages = array_merge($sentMessages, $receivedMessages);
         $data = [];
         $conversation = [];
 
