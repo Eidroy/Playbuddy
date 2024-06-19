@@ -37,8 +37,12 @@ class MessagesController extends AbstractController
                 $senderId = $message->getSenderId();
                 $sender = $this->em->getRepository(Users::class)->find($senderId);
                 $senderUsername = $sender->getUsername();
-                if (!in_array($senderUsername, $data)) {
-                    $data[] = $senderUsername;
+                $senderProfilePicture = $sender->getProfilePicture();
+                if (!in_array($senderUsername, $senderProfilePicture, $data)) {
+                    $data[] = [
+                        'sender_username' => $senderUsername,
+                        'sender_profile_picture' => $senderProfilePicture
+                    ];
                 }
             }
         }
