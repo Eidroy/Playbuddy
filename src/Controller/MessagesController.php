@@ -24,6 +24,7 @@ class MessagesController extends AbstractController
         $messages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
         $messages = array_merge($messages, $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]));
         $data = [];
+        $conversation = [];
 
         foreach ($messages as $message) {
             if ($message->getSenderId() == $id) {
@@ -32,7 +33,7 @@ class MessagesController extends AbstractController
                 $recipientUsername = $recipient->getUsername();
                 $recipientProfilePicture = $recipient->getProfilePicture();
                 $lastMessage = $message->getContent();
-                $data[] = [
+                $conversation[$recipientId] = [
                     'username' => $recipientUsername,
                     'profile_picture' => $recipientProfilePicture,
                     'last_message' => $lastMessage
@@ -43,13 +44,14 @@ class MessagesController extends AbstractController
                 $senderUsername = $sender->getUsername();
                 $senderProfilePicture = $sender->getProfilePicture();
                 $lastMessage = $message->getContent();
-                $data[] = [
+                $conversation[$senderId] = [
                     'username' => $senderUsername,
                     'profile_picture' => $senderProfilePicture,
                     'last_message' => $lastMessage
                 ];
             }
         }
+        $data = array_values($conversation);
         return $this->json($data);
     }
 
