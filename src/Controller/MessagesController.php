@@ -104,12 +104,17 @@ class MessagesController extends AbstractController
         ]));
         $data = [];
         foreach ($messages as $message) {
+            $timestamp = $message->getTime()->getTimestamp();
+            $dateTime = new DateTime("@$timestamp"); // Create a DateTime object from the timestamp
+            $dateTime->setTimezone(new DateTimeZone('UTC')); // Set the timezone to UTC or any other as needed
+            $formattedTime = $dateTime->format('Y-m-d H:i:s'); // Format the time as 'Year-Month-Day Hour:Minute:Second'
+        
             $data[] = [
                 'id' => $message->getId(),
                 'sender_id' => $message->getSenderId(),
                 'recipient_id' => $message->getRecipientId(),
                 'message' => $message->getContent(),
-                'time' => $message->getTime()->getTimestamp()
+                'time' => $formattedTime // Use the formatted time
             ];
         }
 
