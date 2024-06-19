@@ -30,24 +30,16 @@ class MessagesController extends AbstractController
                 $recipientId = $message->getRecipientId();
                 $recipient = $this->em->getRepository(Users::class)->find($recipientId);
                 $recipientUsername = $recipient->getUsername();
-                $recipientProfilePicture = $recipient->getProfilePicture(); // Assuming there is a method to get the profile picture
-                $lastMessage = $message->getContent();
-                $data[] = [
-                    'username' => $recipientUsername,
-                    'profile_picture' => $recipientProfilePicture,
-                    'last_message' => $lastMessage
-                ];
+                if (!in_array($recipientUsername, $data)) {
+                    $data[] = $recipientUsername;
+                }
             } else {
                 $senderId = $message->getSenderId();
                 $sender = $this->em->getRepository(Users::class)->find($senderId);
                 $senderUsername = $sender->getUsername();
-                $senderProfilePicture = $sender->getProfilePicture(); // Assuming there is a method to get the profile picture
-                $lastMessage = $message->getContent();
-                $data[] = [
-                    'username' => $senderUsername,
-                    'profile_picture' => $senderProfilePicture,
-                    'last_message' => $lastMessage
-                ];
+                if (!in_array($senderUsername, $data)) {
+                    $data[] = $senderUsername;
+                }
             }
         }
         return $this->json($data);
