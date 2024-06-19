@@ -109,7 +109,7 @@ class MessagesController extends AbstractController
                 'sender_id' => $message->getSenderId(),
                 'recipient_id' => $message->getRecipientId(),
                 'message' => $message->getContent(),
-                'time' => $message->getTime()->getTimestamp()
+                'time' => $message->getTime()->format('Y-m-d H:i:s')
             ];
         }
 
