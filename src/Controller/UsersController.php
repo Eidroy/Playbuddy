@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Users;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Cloudinary;
 
 
 #[Route('/api', name: 'api_')]
