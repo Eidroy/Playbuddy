@@ -40,7 +40,7 @@ class Users
     #[ORM\Column(type: Types::TEXT)]
     private ?string $skill_level = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_picture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
