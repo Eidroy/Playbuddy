@@ -24,9 +24,7 @@ class SwipesController extends AbstractController
                 'id' => $swipe -> getId(),
                 'user_id' => $swipe -> getUserId(),
                 'swiped_on_id' => $swipe -> getSwipedOnId(),
-                'direction' => $swipe -> getDirection(),
-                'time'=> $swipe -> getTime()
-            ];
+                'direction' => $swipe -> getDirection()            ];
         }
 
         return $this -> json($data);
@@ -39,9 +37,6 @@ class SwipesController extends AbstractController
         $swipe -> setUserId($request -> request -> get('user_id'));
         $swipe -> setSwipedOnId($request -> request -> get('swiped_on_id'));
         $swipe -> setDirection($request -> request -> get('direction'));
-        $timeString = $request->get('time');
-        $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        $swipe -> setTime($time);
 
 
         $em -> persist($swipe);
@@ -52,7 +47,6 @@ class SwipesController extends AbstractController
             'user_id' => $swipe -> getUserId(),
             'swiped_on_id' => $swipe -> getSwipedOnId(),
             'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
         ];
 
         return $this -> json($data);
@@ -61,17 +55,17 @@ class SwipesController extends AbstractController
     #[Route('/swipes/{id}', name: 'app_swipes_show', methods: ['GET'])]
     public function show(EntityManagerInterface $em, int $id): JsonResponse
     {
-        $swipe = $em -> getRepository(Swipes::class) -> find($id);
-
-        $data = [
-            'id' => $swipe -> getId(),
-            'user_id' => $swipe -> getUserId(),
-            'swiped_on_id' => $swipe -> getSwipedOnId(),
-            'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
-        ];
-
-        return $this -> json($data);
+        $swipes = $em->getRepository(Swipes::class)->findBy(['user_id' => $id]);
+        $data = [];
+        foreach ($swipes as $swipe) {
+            $data[] = [
+                'id' => $swipe->getId(),
+                'user_id' => $swipe->getUserId(),
+                'swiped_on_id' => $swipe->getSwipedOnId(),
+                'direction' => $swipe->getDirection(),
+            ];
+        }
+        return $this->json($data);
     }
 
     #[Route('/swipes/{id}', name: 'app_swipes_update', methods: ['PUT', 'PATCH'])]
@@ -93,7 +87,6 @@ class SwipesController extends AbstractController
         $swipe -> setDirection($request -> request -> get('direction'));
         $timeString = $request->get('time');
         $time = \DateTime::createFromFormat('Y-m-d H:i:s', $timeString);
-        $swipe -> setTime($time);
         $em -> flush();
 
         $data = [
@@ -101,7 +94,6 @@ class SwipesController extends AbstractController
             'user_id' => $swipe -> getUserId(),
             'swiped_on_id' => $swipe -> getSwipedOnId(),
             'direction' => $swipe -> getDirection(),
-            'time' => $swipe -> getTime()
         ];
 
         return $this -> json($data);

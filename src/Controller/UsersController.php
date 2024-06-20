@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Users;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Cloudinary;
 
 
 #[Route('/api', name: 'api_')]
@@ -59,46 +61,86 @@ class UsersController extends AbstractController
         return $this -> json($data);
     }
 
-    #[Route('/users/{id}', name: 'app_users_update', methods: ['PUT', 'PATCH'])]
+    #[Route('/users/{id}', name: 'app_users_update', methods: ['POST'])]
     public function update(EntityManagerInterface $em, Request $request, int $id): JsonResponse
     {
-        $user = $em -> getRepository(Users::class) -> find($id);
-
-        if (!$user) {
-            return $this -> json(['message' => 'User not found'], 404);
+      $user = $em->getRepository(Users::class)->find($id);
+    
+      if (!$user) {
+        return $this->json(['message' => 'User not found'], 404);
+      }
+    
+      if ($request->files->has('profile_picture')) {
+        $profilePicture = $request->files->get('profile_picture');
+        $cloudinary = new Cloudinary([
+          "cloud" => [
+            "cloud_name" => "dlsx2xp32",
+            "api_key" => "939582241287325",
+            "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"
+          ],
+          'url' => [
+            'secure' => true
+          ]
+        ]);
+    
+        try {
+          $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
+            'folder' => 'PlayBuddy',
+          ]);
+          if (isset($uploadResult['secure_url'])) {
+            $user->setProfilePicture($uploadResult['secure_url']);
+          }
+        } catch (\Exception $e) {
+          return $this->json(['error' => 'Failed to upload profile picture: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $data = json_decode($request->getContent(), true);
-            $request->request->replace(is_array($data) ? $data : array());
-        }
-
-        $user -> setUsername($request -> request -> get('username'));
-        $user -> setEmail($request -> request -> get('email'));
-        $user -> setPassword($request -> request -> get('password'));
-        $user -> setBio($request -> request -> get('bio'));
-        $user -> setLocation($request -> request -> get('location'));
-        $user -> setGames($request -> request -> get('games'));
-        $user -> setPlatforms($request -> request -> get('platforms'));
-        $user -> setSkillLevel($request -> request -> get('skill_level'));
-        $user -> setProfilePicture($request -> request -> get('profile_picture'));
-        $em -> flush();
-
-        $data = [
-            'id' => $user -> getId(),
-            'username' => $user -> getUsername(),
-            'email' => $user -> getEmail(),
-            'password' => $user -> getPassword(),
-            'bio' => $user -> getBio(),
-            'location' => $user -> getLocation(),
-            'games' => $user -> getGames(),
-            'platforms' => $user -> getPlatforms(),
-            'skill_level' => $user -> getSkillLevel(),
-            'profile_picture' => $user -> getProfilePicture()
-        ];
-
-        return $this -> json($data);
+      }
+    
+      // Update other user details
+      if ($request->request->has('username')) {
+        $user->setUsername($request->request->get('username'));
+      }
+      if ($request->request->has('email')) {
+        $user->setEmail($request->request->get('email'));
+      }
+      if ($request->request->has('password')) {
+        $user->setPassword($request->request->get('password'));
+      }
+      if ($request->request->has('bio')) {
+        $user->setBio($request->request->get('bio'));
+      }
+      if ($request->request->has('location')) {
+        $user->setLocation($request->request->get('location'));
+      }
+      if ($request->request->has('games')) {
+        $user->setGames($request->request->get('games'));
+      }
+      if ($request->request->has('platforms')) {
+        $user->setPlatforms($request->request->get('platforms'));
+      }
+      if ($request->request->has('skill_level')) {
+        $user->setSkillLevel($request->request->get('skill_level'));
+      }
+    
+      // Persist all changes at once
+      $em->persist($user);
+      $em->flush();
+    
+      $data = [
+        'id' => $user->getId(),
+        'username' => $user->getUsername(),
+        'email' => $user->getEmail(),
+        'password' => $user->getPassword(), // Consider not including password in the response
+        'bio' => $user->getBio(),
+        'location' => $user->getLocation(),
+        'games' => $user->getGames(),
+        'platforms' => $user->getPlatforms(),
+        'skill_level' => $user->getSkillLevel(),
+        'profile_picture' => $user->getProfilePicture()
+      ];
+    
+      return $this->json($data);
     }
+
 
     #[Route('/users/{id}', name: 'app_users_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $em, int $id): JsonResponse

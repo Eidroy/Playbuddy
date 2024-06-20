@@ -21,27 +21,48 @@ class MessagesController extends AbstractController
     #[Route('/messages/conversation/{id}', name: 'app_messages_conversation', methods: ['GET'])]
     public function showConversation($id): Response
     {
-        $messages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
-        $messages = array_merge($messages, $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]));
-        $data = [];
+        $sentMessages = $this->em->getRepository(Messages::class)->findBy(['sender_id' => $id]);
+        $receivedMessages = $this->em->getRepository(Messages::class)->findBy(['recipient_id' => $id]);
+        $messages = array_merge($sentMessages, $receivedMessages);
+        $conversation = [];
 
         foreach ($messages as $message) {
             if ($message->getSenderId() == $id) {
                 $recipientId = $message->getRecipientId();
                 $recipient = $this->em->getRepository(Users::class)->find($recipientId);
                 $recipientUsername = $recipient->getUsername();
-                if (!in_array($recipientUsername, $data)) {
-                    $data[] = $recipientUsername;
+                $recipientProfilePicture = $recipient->getProfilePicture();
+                $lastMessage = $message->getContent();
+                $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
+                if (!isset($conversation[$recipientId]) || $lastMessageTime > $conversation[$recipientId]['last_message_time']) {
+                    $conversation[$recipientId] = [
+                        'id' => $recipientId,
+                        'username' => $recipientUsername,
+                        'profile_picture' => $recipientProfilePicture,
+                        'last_message' => $lastMessage,
+                        'last_message_time' => $lastMessageTime
+                    ];
                 }
             } else {
                 $senderId = $message->getSenderId();
                 $sender = $this->em->getRepository(Users::class)->find($senderId);
                 $senderUsername = $sender->getUsername();
-                if (!in_array($senderUsername, $data)) {
-                    $data[] = $senderUsername;
+                $senderProfilePicture = $sender->getProfilePicture();
+                $lastMessage = $message->getContent();
+                $lastMessageTime = $message->getTime()->format('Y-m-d H:i:s');
+                if (!isset($conversation[$senderId]) || $lastMessageTime > $conversation[$senderId]['last_message_time']) {
+                    $conversation[$senderId] = [
+                        'id' => $senderId,
+                        'username' => $senderUsername,
+                        'profile_picture' => $senderProfilePicture,
+                        'last_message' => $lastMessage,
+                        'last_message_time' => $lastMessageTime
+                    ];
                 }
             }
         }
+
+        $data = array_values($conversation);
         return $this->json($data);
     }
 
@@ -88,18 +109,18 @@ class MessagesController extends AbstractController
                 'sender_id' => $message->getSenderId(),
                 'recipient_id' => $message->getRecipientId(),
                 'message' => $message->getContent(),
-                'time' => $message->getTime()
+                'time' => $message->getTime()->format('Y-m-d H:i:s')
             ];
         }
 
         usort($data, function ($a, $b) {
-            return $a['id'] <=> $b['id'];
+            return $a['time'] <=> $b['time'];
         });
 
         return $this->json($data);
     }
 
-    #[Route('/messages/{id}', name: 'app_messages_edit', methods: ['PUT', 'PATCH'])]
+    #[Route('/messages/edit/{id}', name: 'app_messages_edit', methods: ['PUT', 'PATCH'])]
     public function editMessage(Request $request, $id): Response
     {
         $message = $this->em->getRepository(Messages::class)->find($id);

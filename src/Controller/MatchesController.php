@@ -42,31 +42,38 @@ class MatchesController extends AbstractController
     #[Route('/matches', name: 'app_matches_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-    
         $userId = $request->request->get('user_id');
         $swipedOnId = $request->request->get('swiped_on_id');
         $direction = $request->request->get('direction');
         $time = $request->request->get('time');
 
-        if ($direction !== 'right') {
+        $swipe = new Swipes();
+        $swipe->setUserId($userId);
+        $swipe->setSwipedOnId($swipedOnId);
+        $swipe->setDirection($direction);
+
+        $this->em->persist($swipe);
+        $this->em->flush();
+
+        if ($direction === 'left') {
             return $this->json(['status' => 'No match']);
         }
-    
+
         $swipesRepository = $this->em->getRepository(Swipes::class);
         $mutualSwipe = $swipesRepository->findOneBy(['user_id' => $swipedOnId, 'swiped_on_id' => $userId, 'direction' => 'right']);
-    
+
         if ($mutualSwipe) {
             $match = new Matches();
             $match->setUser1Id($userId);
             $match->setUser2Id($swipedOnId);
             $match->setTime(new \DateTime($time));
-    
+
             $this->em->persist($match);
             $this->em->flush();
-    
+
             return $this->json(['status' => 'Match created']);
         }
-    
+
         return $this->json(['status' => 'No match']);
     }
 
