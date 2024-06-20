@@ -70,28 +70,28 @@ class UsersController extends AbstractController
            return $this->json(['message' => 'User not found'], 404);
        }
    
-       $profilePicture = $request->files->get('profile_picture');
-       if ($profilePicture) {
-           $cloudinary = new Cloudinary([
-               "cloud" => [
-                   "cloud_name" => "dlsx2xp32",
-                   "api_key" => "939582241287325",
-                   "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"
-               ],
-               'url' => [
-                   'secure' => true
-               ]
-           ]);
-       
-           try {
-               $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
-                   'folder' => 'PlayBuddy',
-               ]);
-               $user->setProfilePicture($uploadResult['secure_url']);
-           } catch (\Exception $e) {
-               return $this->json(['error' => 'Failed to upload profile picture: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-           }
-       }
+        if ($request->files->has('profile_picture')) {
+            $profilePicture = $request->files->get('profile_picture');
+            $cloudinary = new Cloudinary([
+             "cloud" => [
+                 "cloud_name" => "dlsx2xp32",
+                 "api_key" => "939582241287325",
+                 "api_secret" => "0Zri3GZaRG6b2fvhYliFJOPMVNI"
+             ],
+             'url' => [
+                 'secure' => true
+             ]
+            ]);
+        
+            try {
+             $uploadResult = $cloudinary->uploadApi()->upload($profilePicture->getPathname(), [
+                 'folder' => 'PlayBuddy',
+             ]);
+             $user->setProfilePicture($uploadResult['secure_url']);
+            } catch (\Exception $e) {
+             return $this->json(['error' => 'Failed to upload profile picture: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
        
        // Update other user details if provided
        if ($request->request->has('username')) {
