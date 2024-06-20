@@ -77,8 +77,8 @@ class LoginController extends AbstractController
         $user->setEmail($request->request->get('email'));
         $user->setBio($request->request->get('bio'));
         $user->setLocation($request->request->get('location'));
-        $user->setGames($request->request->get('games'));
-        $user->setPlatforms($request->request->get('platforms'));
+        $user->setGames(json_decode($request->request->get('games'), true));
+        $user->setPlatforms(json_decode($request->request->get('platforms'),true));
         $user->setSkillLevel($request->request->get('skill_level'));
         $user->setProfilePicture($uploadResult['secure_url']);
     
