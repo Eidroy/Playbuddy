@@ -31,11 +31,11 @@ class Users
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $games = null;
+    #[ORM\Column(type: Types::JSON)]
+    private ?array $games = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $platforms = null;
+    #[ORM\Column(type: Types::JSON)]
+    private ?array $platforms = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $skill_level = null;
@@ -116,24 +116,24 @@ class Users
         return $this;
     }
 
-    public function getGames(): ?string
+    public function getGames(): array
     {
         return $this->games;
     }
 
-    public function setGames(string $games): static
+    public function setGames(array $games): self
     {
         $this->games = $games;
 
         return $this;
     }
 
-    public function getPlatforms(): ?string
+    public function getPlatforms(): array
     {
         return $this->platforms;
     }
 
-    public function setPlatforms(string $platforms): static
+    public function setPlatforms(array $platforms): self
     {
         $this->platforms = $platforms;
 
