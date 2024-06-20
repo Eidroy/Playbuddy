@@ -102,8 +102,7 @@ class UsersController extends AbstractController
        }
        if ($request->request->has('password')) {
            // Assuming you hash the password before setting it
-           $hashedPassword = password_hash($request->request->get('password'), PASSWORD_DEFAULT);
-           $user->setPassword($hashedPassword);
+           $user->setPassword($request->request->get('password'));
        }
        if ($request->request->has('bio')) {
            $user->setBio($request->request->get('bio'));
