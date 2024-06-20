@@ -14,7 +14,7 @@
 | POST   | api    | /register              | /                            | Username, email, password, bio, location, games , platforms, skill_level, profile_picture | make a new account                    |
 | GET    | api    | /users                 | /                            | /                                                                                         | retrieve all users                    |
 | GET    | api    | /users                 | /${id}                       | /                                                                                         | retrieve a specific user by id        |
-| PATCH  | api    | /users                 | /${id}                       | Username, email, password, bio, location, games , platforms, skill_level, profile_picture | updates a specific user by id         |
+| POST   | api    | /users                 | /${id}                       | Username, email, password, bio, location, games , platforms, skill_level, profile_picture | updates a specific user by id         |
 | DELETE | api    | /users                 | /${id}                       | /                                                                                         | delete a specific user by id          |
 | GET    | api    | /matches               | /                            | /                                                                                         | retrieve all matches                  |
 | POST   | api    | /matches               | /                            | userid1, userid2, time                                                                    | creates a new match                   |
