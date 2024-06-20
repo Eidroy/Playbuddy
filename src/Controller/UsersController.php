@@ -89,6 +89,7 @@ class UsersController extends AbstractController
           ]);
           if (isset($uploadResult['secure_url'])) {
             $user->setProfilePicture($uploadResult['secure_url']);
+            $em->persist($user);
           }
         } catch (\Exception $e) {
           return $this->json(['error' => 'Failed to upload profile picture: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -98,31 +99,38 @@ class UsersController extends AbstractController
       // Update other user details
       if ($request->request->has('username')) {
         $user->setUsername($request->request->get('username'));
+        $em->persist($user);
       }
       if ($request->request->has('email')) {
         $user->setEmail($request->request->get('email'));
+        $em->persist($user);
       }
       if ($request->request->has('password')) {
         $user->setPassword($request->request->get('password'));
+        $em->persist($user);
       }
       if ($request->request->has('bio')) {
         $user->setBio($request->request->get('bio'));
+        $em->persist($user);
       }
       if ($request->request->has('location')) {
-        $user->setLocation($request->request->get('location'));
+        $user->setLocation($request->request->get('location'));        
+        $em->persist($user);
       }
       if ($request->request->has('games')) {
         $user->setGames($request->request->get('games'));
+        $em->persist($user);
       }
       if ($request->request->has('platforms')) {
         $user->setPlatforms($request->request->get('platforms'));
+        $em->persist($user);
       }
       if ($request->request->has('skill_level')) {
         $user->setSkillLevel($request->request->get('skill_level'));
+        $em->persist($user);
       }
     
       // Persist all changes at once
-      $em->persist($user);
       $em->flush();
     
       $data = [
